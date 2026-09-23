@@ -10,6 +10,6 @@ public class HelloController {
 
     @GetMapping("/hello")
     public HelloResponse hello() {
-        return new HelloResponse("Hello from Java 8 Spring Boot");
+        return new HelloResponse("Hello from Java 21 Spring Boot");
     }
 }

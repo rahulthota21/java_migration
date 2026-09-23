@@ -1,13 +1,13 @@
 $ErrorActionPreference = 'Stop'
 
 $projectDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-$javaExe = 'C:\java\jdk8\bin\java.exe'
-$jar = Join-Path $projectDir 'build\libs\infolens-java8-api-1.0.0.jar'
+$javaExe = 'C:\Program Files\Eclipse Adoptium\jdk-21.0.12.101-hotspot\bin\java.exe'
+$jar = Join-Path $projectDir 'build\libs\infolens-java8-api-2.0.0.jar'
 $outLog = Join-Path $projectDir 'run-out.log'
 $errLog = Join-Path $projectDir 'run-err.log'
 
 if (-not (Test-Path $javaExe)) {
-    throw "Java 8 was not found at $javaExe"
+    throw "Java 21 was not found at $javaExe"
 }
 
 if (-not (Test-Path $jar)) {

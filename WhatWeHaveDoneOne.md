@@ -1,14 +1,18 @@
 # What We Have Done
 
+## Current project status
+
+The project has been migrated from Java 8/Spring Boot 2.5.15 to Java 21/Spring Boot 3.2.12. The Java 8 baseline is preserved in `build-java8-final.gradle`.
+
 ## Project
 
-Built a Java 8 Spring Boot REST API using the supplied `build.gradle` dependency set.
+Built a Java 21 Spring Boot REST API using `build-java21.gradle` as the migration source and `build.gradle` as the active build.
 
 - Group: `com.freddiemac.infolens`
-- Version: `1.0.0`
-- Spring Boot: `2.5.15`
-- Gradle wrapper: `7.6.4`
-- Java: `C:\java\jdk8`
+- Version: `2.0.0`
+- Spring Boot: `3.2.12`
+- Gradle wrapper: `8.10`
+- Java: `21.0.12.1`
 - Build system: Gradle only
 
 ## REST API
@@ -22,7 +26,7 @@ GET http://localhost:8080/api/v1/hello
 Response verified:
 
 ```json
-{"message":"Hello from Java 8 Spring Boot"}
+{"message":"Hello from Java 21 Spring Boot"}
 ```
 
 The live endpoint returned HTTP `200`.
@@ -40,45 +44,32 @@ The live endpoint returned HTTP `200`.
 - `src/main/resources/application.properties`
 - `src/test/java/com/freddiemac/infolens/api/HelloControllerTest.java`
 
-## Java and Gradle isolation
+## Java and Gradle configuration
 
 `gradle.properties` contains:
 
 ```properties
-org.gradle.java.home=C:/java/jdk8
+org.gradle.java.home=C:/Program Files/Eclipse Adoptium/jdk-21.0.12.101-hotspot
 org.gradle.daemon=false
 ```
 
-This selects Java 8 for this project only. Global Java 21 and global Gradle were not changed. The project uses `gradlew.bat`, not the global Gradle command.
+The project now targets Java 21. The Java 8 baseline remains available in `build-java8-final.gradle`. The project wrapper uses Gradle 8.10.
 
 ## Validation completed
 
-- `gradlew.bat clean test --no-daemon`: successful
+- Java 21 detected: `21.0.12.1`
+- `gradlew.bat --version`: Gradle `8.10`, Java 21
+- `gradlew.bat clean test bootJar --no-daemon`: successful
 - Test cases executed: `1`
 - Test failures: `0`
 - Test errors: `0`
-- `gradlew.bat bootJar --no-daemon`: successful
-- Application launched with `C:\java\jdk8\bin\java.exe`: successful
-- `GET /api/v1/hello`: HTTP `200`
-- Expected JSON response: verified
+- JaCoCo report: successful
+- Application launch script updated to Java 21
+- `GET /api/v1/hello`: HTTP `200` verified with Java 21
+- Response: `{"message":"Hello from Java 21 Spring Boot"}`
 
 The internal FHLMC dependencies remain commented because no internal Artifactory URL or credentials were supplied.
 
-## Startup error fix
+## Startup script
 
-The command failed when `run-err.log` reported:
-
-```text
-Unable to access jarfile build\libs\infolens-java8-api-1.0.0.jar
-```
-
-This happened because `clean test` deletes the `build` directory, while `test` does not create the executable Spring Boot JAR. The JAR must be recreated with `bootJar`. The relative path was also unsafe because the project directory contains a space (`java migration`).
-
-The fix is:
-
-```powershell
-.\gradlew.bat bootJar --no-daemon
-.\run-api.ps1
-```
-
-`run-api.ps1` uses the absolute JAR path, quotes it correctly, uses Java 8 explicitly, verifies the endpoint, and stops the temporary application process.
+`run-api.ps1` uses the absolute Java 21 executable and JAR path, quotes paths containing spaces, verifies the endpoint, and stops the temporary application process.
